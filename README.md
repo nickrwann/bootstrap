@@ -1,8 +1,8 @@
 # bootstrap
 
-One-liner Windows dev machine setup. Paste into PowerShell and go.
+One-liner Windows dev machine setup. Paste into PowerShell, walk away, come back ready.
 
-## Windows side
+## Quick start
 
 Open an **elevated PowerShell** and run:
 
@@ -10,36 +10,34 @@ Open an **elevated PowerShell** and run:
 irm https://raw.githubusercontent.com/nickrwann/bootstrap/main/setup.ps1 | iex
 ```
 
-This will:
-1. Verify `winget` is available
-2. Install **Git**
-3. Install **Windows Terminal**
-4. Install **WSL + Ubuntu 24.04** (pinned)
-5. Set Ubuntu 24.04 as the default Terminal profile
-6. Prompt for a reboot
+That's it. The script handles everything in two phases:
 
-## WSL side
+### Phase 1 (before reboot)
+You'll be prompted Y/N for each step:
+- **Git** — via winget
+- **Windows Terminal** — via winget
+- **WSL + Ubuntu 24.04** — pinned distro
 
-After reboot, open Windows Terminal (drops into Ubuntu) and run:
+If WSL was just installed, the script registers a RunOnce task and reboots.
 
-```bash
-git clone https://github.com/nickrwann/bootstrap ~/src/github.com/nickrwann/bootstrap
-~/src/github.com/nickrwann/bootstrap/wsl-setup.sh
-```
+### Phase 2 (after reboot, automatic)
+Picks up automatically on next login — no manual steps:
+- Sets **Ubuntu 24.04 as the default Terminal profile**
+- **Clones this repo** into WSL at `~/src/github.com/nickrwann/bootstrap`
+- Runs `wsl-setup.sh` inside Ubuntu, which prompts Y/N for:
+  - **Starship** (shell prompt)
+  - **Zellij** (terminal multiplexer)
+  - **Config symlinks** (Starship + Zellij configs from repo)
 
-This will:
-1. Install **Starship** (shell prompt)
-2. Install **Zellij** (terminal multiplexer, latest release)
-3. Symlink configs from the repo into `~/.config/`
-4. Add Starship init + `~/.local/bin` to `.bashrc`
+If WSL was already installed (no reboot needed), both phases run back-to-back in one go.
 
 ## What's in the box
 
 ```
-setup.ps1              # Windows bootstrap (the one-liner target)
-wsl-setup.sh           # WSL/Ubuntu bootstrap
+setup.ps1              # Windows bootstrap (one-liner entry point, two-phase)
+wsl-setup.sh           # WSL/Ubuntu bootstrap (interactive)
 config/
-  starship.toml        # Starship prompt config (bracketed segments, full path)
+  starship.toml        # Starship config (bracketed segments, full path)
   zellij/config.kdl    # Zellij config (Nord theme, custom keybinds)
 ```
 
@@ -50,6 +48,6 @@ config/
 
 ## Roadmap
 
-- [ ] Interactive menu to pick what to install
 - [ ] Dotfiles (bash, git)
-- [ ] Dev tools (languages, CLIs, apps)
+- [ ] Dev tools (uv, gh, Docker, etc.)
+- [ ] More winget apps (VS Code, Spotify, etc.)
