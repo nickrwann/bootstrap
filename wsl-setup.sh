@@ -64,18 +64,54 @@ echo ""
 
 # ── 3. Link configs ──────────────────────────────────────────────────────────
 
-if prompt_yn "Link Starship + Zellij configs from repo?"; then
-    # Starship
-    mkdir -p "$HOME/.config"
-    ln -sf "$SCRIPT_DIR/config/starship.toml" "$HOME/.config/starship.toml"
-    echo "  ~/.config/starship.toml -> repo"
+# Helper: check if a path is already symlinked to the expected repo target
+is_linked_to_repo() {
+    local link="$1" target="$2"
+    [ -L "$link" ] && [ "$(readlink -f "$link")" = "$(readlink -f "$target")" ]
+}
 
-    # Zellij
+# Starship config
+STARSHIP_LINK="$HOME/.config/starship.toml"
+STARSHIP_TARGET="$SCRIPT_DIR/config/starship.toml"
+if is_linked_to_repo "$STARSHIP_LINK" "$STARSHIP_TARGET"; then
+    echo "[Starship config] Already linked to repo."
+elif [ -e "$STARSHIP_LINK" ]; then
+    if prompt_yn "Starship config exists. Overwrite with repo version?" "n"; then
+        mkdir -p "$HOME/.config"
+        ln -sf "$STARSHIP_TARGET" "$STARSHIP_LINK"
+        echo "  ~/.config/starship.toml -> repo (overwritten)"
+    else
+        echo "  Kept existing Starship config."
+    fi
+elif prompt_yn "Link Starship config from repo?"; then
+    mkdir -p "$HOME/.config"
+    ln -sf "$STARSHIP_TARGET" "$STARSHIP_LINK"
+    echo "  ~/.config/starship.toml -> repo"
+else
+    echo "  Skipped Starship config."
+fi
+
+echo ""
+
+# Zellij config
+ZELLIJ_LINK="$HOME/.config/zellij/config.kdl"
+ZELLIJ_TARGET="$SCRIPT_DIR/config/zellij/config.kdl"
+if is_linked_to_repo "$ZELLIJ_LINK" "$ZELLIJ_TARGET"; then
+    echo "[Zellij config] Already linked to repo."
+elif [ -e "$ZELLIJ_LINK" ]; then
+    if prompt_yn "Zellij config exists. Overwrite with repo version?" "n"; then
+        mkdir -p "$HOME/.config/zellij"
+        ln -sf "$ZELLIJ_TARGET" "$ZELLIJ_LINK"
+        echo "  ~/.config/zellij/config.kdl -> repo (overwritten)"
+    else
+        echo "  Kept existing Zellij config."
+    fi
+elif prompt_yn "Link Zellij config from repo?"; then
     mkdir -p "$HOME/.config/zellij"
-    ln -sf "$SCRIPT_DIR/config/zellij/config.kdl" "$HOME/.config/zellij/config.kdl"
+    ln -sf "$ZELLIJ_TARGET" "$ZELLIJ_LINK"
     echo "  ~/.config/zellij/config.kdl -> repo"
 else
-    echo "  Skipped config linking."
+    echo "  Skipped Zellij config."
 fi
 
 echo ""
