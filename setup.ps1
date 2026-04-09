@@ -144,7 +144,23 @@ if ($wtInstalled) {
 
 Write-Host ""
 
-# ── 4. WSL + Ubuntu 24.04 ────────────────────────────────────────────────────
+# ── 4. uv (Python toolchain) ─────────────────────────────────────────────────
+
+$uvInstalled = winget list --id astral-sh.uv 2>$null | Select-String 'astral-sh.uv'
+if ($uvInstalled) {
+    Write-Host "[uv] Already installed." -ForegroundColor Green
+} elseif (Prompt-YesNo "Install uv (Python toolchain)?") {
+    Write-Host "  Installing uv via winget..." -ForegroundColor Yellow
+    winget install --id astral-sh.uv -e --source winget --accept-package-agreements --accept-source-agreements
+    Refresh-Path
+    Write-Host "  uv installed." -ForegroundColor Green
+} else {
+    Write-Host "  Skipped uv." -ForegroundColor DarkGray
+}
+
+Write-Host ""
+
+# ── 5. WSL + Ubuntu 24.04 ────────────────────────────────────────────────────
 
 $needsReboot = $false
 

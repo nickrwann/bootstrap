@@ -12,22 +12,42 @@ irm https://raw.githubusercontent.com/nickrwann/bootstrap/main/setup.ps1 | iex
 
 That's it. The script handles everything in two phases:
 
-### Phase 1 (before reboot)
+### Phase 1 — Windows (before reboot)
 You'll be prompted Y/N for each step:
 - **Git** — via winget
 - **Windows Terminal** — via winget
+- **uv** — Python toolchain, via winget
 - **WSL + Ubuntu 24.04** — pinned distro
 
 If WSL was just installed, the script registers a RunOnce task and reboots.
 
-### Phase 2 (after reboot, automatic)
+### Phase 2 — WSL (after reboot, automatic)
 Picks up automatically on next login — no manual steps:
 - Sets **Ubuntu 24.04 as the default Terminal profile**
 - **Clones this repo** into WSL at `~/src/github.com/nickrwann/bootstrap`
-- Runs `wsl-setup.sh` inside Ubuntu, which prompts Y/N for:
-  - **Starship** (shell prompt)
-  - **Zellij** (terminal multiplexer)
-  - **Config symlinks** (Starship + Zellij configs from repo)
+- Runs `wsl-setup.sh` inside Ubuntu, which prompts Y/N for each tool:
+
+**Core CLI tools** (apt):
+- `fzf` — fuzzy finder
+- `fd` — fast file finder
+- `ripgrep` — fast grep
+- `jq` — JSON processor
+- `tree` — directory viewer
+
+**Dev platforms:**
+- `uv` — Python toolchain
+- `gh` — GitHub CLI
+- `glab` — GitLab CLI
+- `docker` — containers
+- `devin` — Devin CLI
+
+**Terminal tools:**
+- `starship` — shell prompt
+- `zellij` — terminal multiplexer
+
+**Configs** (smart linking — skips if already linked, warns before overwrite):
+- `starship.toml`
+- `zellij/config.kdl`
 
 If WSL was already installed (no reboot needed), both phases run back-to-back in one go.
 
@@ -49,5 +69,4 @@ config/
 ## Roadmap
 
 - [ ] Dotfiles (bash, git)
-- [ ] Dev tools (uv, gh, Docker, etc.)
 - [ ] More winget apps (VS Code, Spotify, etc.)
