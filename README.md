@@ -17,6 +17,10 @@ You'll be prompted Y/N for each step:
 - **Git** — via winget
 - **Windows Terminal** — via winget
 - **uv** — Python toolchain, via winget
+- **VS Code** — via winget
+- **GitHub Desktop** — via winget
+- **Docker Desktop** — via winget
+- **Spotify** — via winget
 - **WSL + Ubuntu 24.04** — pinned distro
 
 If WSL was just installed, the script registers a RunOnce task and reboots.

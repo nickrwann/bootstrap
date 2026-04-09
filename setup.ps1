@@ -88,6 +88,13 @@ if (Test-Path $phase2Flag) {
 # Phase 1 — interactive Windows setup
 # ══════════════════════════════════════════════════════════════════════════════
 
+# Verify elevated session
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
+    Write-Host "  This script needs to be run as Administrator." -ForegroundColor Red
+    Write-Host "  Right-click PowerShell -> Run as Administrator, then try again." -ForegroundColor DarkGray
+    exit 1
+}
+
 Write-Host ""
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host "  nickrwann/bootstrap" -ForegroundColor Cyan
@@ -160,7 +167,31 @@ if ($uvInstalled) {
 
 Write-Host ""
 
-# ── 5. WSL + Ubuntu 24.04 ────────────────────────────────────────────────────
+# ── 5. Windows apps ──────────────────────────────────────────────────────────
+
+# Helper for winget app installs — check, prompt, install
+function Install-WingetApp {
+    param([string]$Id, [string]$Name)
+    $installed = winget list --id $Id 2>$null | Select-String $Id
+    if ($installed) {
+        Write-Host "[$Name] Already installed." -ForegroundColor Green
+    } elseif (Prompt-YesNo "Install ${Name}?") {
+        Write-Host "  Installing $Name via winget..." -ForegroundColor Yellow
+        winget install --id $Id -e --source winget --accept-package-agreements --accept-source-agreements
+        Write-Host "  $Name installed." -ForegroundColor Green
+    } else {
+        Write-Host "  Skipped $Name." -ForegroundColor DarkGray
+    }
+}
+
+Install-WingetApp "Microsoft.VisualStudioCode" "VS Code"
+Install-WingetApp "GitHub.GitHubDesktop" "GitHub Desktop"
+Install-WingetApp "Docker.DockerDesktop" "Docker Desktop"
+Install-WingetApp "Spotify.Spotify" "Spotify"
+
+Write-Host ""
+
+# ── 6. WSL + Ubuntu 24.04 ────────────────────────────────────────────────────
 
 $needsReboot = $false
 
