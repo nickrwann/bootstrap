@@ -46,7 +46,3 @@ Every step checks if the tool is already installed and skips it. Config linking 
 
 - Windows 10 (1809+) or Windows 11
 - [App Installer (winget)](https://aka.ms/getwinget) — pre-installed on most modern Windows
-
-## License
-
-MIT
